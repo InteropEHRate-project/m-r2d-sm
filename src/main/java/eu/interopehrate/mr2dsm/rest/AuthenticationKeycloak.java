@@ -1,4 +1,4 @@
-package eu.interopehrate.mr2dsm.api;
+package eu.interopehrate.mr2dsm.rest;
 
 /*
  *		Author: UBITECH
@@ -12,6 +12,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
@@ -31,7 +32,7 @@ public interface AuthenticationKeycloak {
 
     @FormUrlEncoded
     @Headers("Content-Type: application/x-www-form-urlencoded")
-    @POST("/auth/realms/user-authentication/protocol/openid-connect/token")
+    @POST("/auth/realms/service-b/protocol/openid-connect/token")
     Call<AccessTokenResponce> requestAuthToken(@Field("grant_type") String grantType,
                                                @Field("username") String username,
                                                @Field("password") String password,
@@ -46,7 +47,8 @@ public interface AuthenticationKeycloak {
      *
      */
 
-    @POST("/api/v1/bank/account/balance")
-    Call<Object> authenticate(@Header("Authorization") String token,
-                              @Body String body);
+    @Headers("Content-Type: application/x-www-form-urlencoded")
+    @GET("/api/v1/internal")
+    Call<String> authenticate(@Header("Authorization") String token/*,
+                              @Body String body*/);
 }

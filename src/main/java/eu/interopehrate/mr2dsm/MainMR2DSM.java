@@ -1,38 +1,43 @@
-package eu.interopehrate.mr2dsm.presenter;
+package eu.interopehrate.mr2dsm;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
 
-import eu.interopehrate.mr2dsm.MainContract;
-import eu.interopehrate.mr2dsm.api.AuthenticationKeycloak;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import eu.interopehrate.mr2dsm.rest.AuthenticationKeycloak;
+import eu.interopehrate.mr2dsm.api.MR2DSM;
 import eu.interopehrate.mr2dsm.model.AccessTokenResponce;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-public class MainPresenter implements MainContract.Presenter {
-    private MainContract.View view;
+public class MainMR2DSM implements MR2DSM {
+    private View view;
     public AuthenticationKeycloak postsService;
     SharedPreferences pref;
 
-    public MainPresenter(MainContract.View view) {
+    public MainMR2DSM(View view) {
         this.view = view;
-        view.setPresenter(this);
     }
 
     @Override
     public void requestToken(String username, String password) {
-        Retrofit retrofitKeycloak = new Retrofit.Builder()
-                .baseUrl("http://213.249.46.205:8180")
-                .addConverterFactory(GsonConverterFactory.create())
+        Retrofit.Builder builder = new Retrofit.Builder();
+        builder.baseUrl("http://192.168.1.51:8180");
+        builder.addConverterFactory(GsonConverterFactory.create());
+        Retrofit retrofitKeycloak = builder
                 .build();
         postsService = retrofitKeycloak.create(AuthenticationKeycloak.class);
 
-        Call<AccessTokenResponce> call = postsService.requestAuthToken("password",username,password,"gateway");
+        Call<AccessTokenResponce> call = postsService.requestAuthToken("password",username,password,"caller");
 
         call.enqueue(new Callback<AccessTokenResponce>() {
             @Override
@@ -51,23 +56,28 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void authenticate(String token) {
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
         Retrofit retrofitNCP = new Retrofit.Builder()
-                .baseUrl("http://192.168.1.50:8084")
-                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl("http://192.168.1.51:8085")
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         postsService = retrofitNCP.create(AuthenticationKeycloak.class);
 
         String value = "Bearer " + token;
+        Log.d("MSSG value",value);
 
-        Call<Object> call = postsService.authenticate(value, "8bbebb8a-02b0-49b3-b780-5159927a9f08");
-        call.enqueue(new Callback<Object>() {
+        Call<String> call = postsService.authenticate(value/*, "8bbebb8a-02b0-49b3-b780-5159927a9f08"*/);
+        call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
+            public void onResponse(Call<String> call, Response<String> response) {
                 Log.d("MSSG getAccess_token",response.toString());
             }
 
             @Override
-            public void onFailure(Call<Object> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) {
                 Log.e("MSSG access_token",t.getMessage());
             }
         });
@@ -75,7 +85,7 @@ public class MainPresenter implements MainContract.Presenter {
 
     public void storeToken(String token) {
         Log.d("MSSG storeToken", token);
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences((Context) view);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(view.getContext());
         SharedPreferences.Editor editor = settings.edit();
         editor.putString("access_token", token);
         editor.commit();
