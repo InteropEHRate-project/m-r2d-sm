@@ -2,17 +2,20 @@ apply plugin: 'com.android.library'
 apply plugin: "maven-publish"
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 29
+        minSdkVersion 16
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
+
+        // Required when setting minSdkVersion to 20 or lower
+        multiDexEnabled = true
     }
 
     buildTypes {
@@ -21,18 +24,26 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled = true
+        // Sets Java compatibility to Java 8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
 
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.0'
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 }
 
 /*
@@ -42,7 +53,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             artifactId = "mr2dsm"
-            artifact("build/outputs/aar/$archivesBaseName"+"-release.aar") {
+            artifact("build/outputs/aar/$archivesBaseName" + "-release.aar") {
 //            artifact("build/outputs/aar/lib-debug.aar") {
                 extension "aar"
 
