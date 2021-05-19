@@ -1,5 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: "maven-publish"
+group = "eu.interoperhate"
+version = "0.1.0"
 
 android {
     compileSdkVersion 30
@@ -52,7 +54,7 @@ dependencies {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifactId = "mr2dsm"
+            artifactId = "M-R2D-SM"
             artifact("build/outputs/aar/$archivesBaseName" + "-release.aar") {
 //            artifact("build/outputs/aar/lib-debug.aar") {
                 extension "aar"

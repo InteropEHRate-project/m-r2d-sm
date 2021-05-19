@@ -38,6 +38,7 @@ class JwtUtil {
         PublicKey publicKey = null;
         try {
             //Remove extra Strings
+            key = key.replaceAll("\r", "");
             key = key.replace("-----BEGIN PUBLIC KEY-----\n","");
             key = key.replace("-----END PUBLIC KEY-----", "");
 
