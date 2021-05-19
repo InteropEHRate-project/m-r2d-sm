@@ -27,9 +27,14 @@ public class MR2DSM {
 
     private static final String LOG_TAG = "MR2DSM";
 
-    public static ResponseDetails decode(final Context context, final String jwt) throws IOException, InvalidKeySpecException {
+    public static ResponseDetails decode(final Context context, final String jwt) throws InvalidKeySpecException {
 
-        final String key = LoadData(context, "private.pub");
+        String key = "";
+        try {
+            key = LoadData(context, "private.pub");
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Failed to load private.pub :" + e.getMessage());
+        }
         Log.d("key", key);
         Claims jwtClaims = JwtUtil.decode(jwt, key);
 
