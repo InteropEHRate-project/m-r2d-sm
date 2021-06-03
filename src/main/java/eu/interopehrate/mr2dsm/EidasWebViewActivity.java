@@ -18,8 +18,7 @@ import eu.interopehrate.mr2dsm.model.AuthRequest;
 
 public class EidasWebViewActivity extends AppCompatActivity {
     public static final String JWT_TOKEN = "JWT_TOKEN";
-    private static final String LOGIN_URL = "http://212.101.173.84:8080/login";
-
+    public static final String LOGIN_URL = "LOGIN_URL";
     private static final String LOG_TAG = "EidasWebViewActivity";
 
     private WebView mWebView;
@@ -28,13 +27,16 @@ public class EidasWebViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.webview);
 
+        Intent intent = getIntent();
+        String loginUrl = intent.getStringExtra(LOGIN_URL);
+
         mWebView = (WebView) findViewById(R.id.webView1);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setWebViewClient(new EidasWebViewClient());
         mWebView.setWebChromeClient(new EidasWebCromeClient());
 
         AuthRequest auth = new AuthRequest();
-        loadLoginPage(LOGIN_URL, auth);
+        loadLoginPage(loginUrl, auth);
     }
 
     private String generateRequestUrl(String url, AuthRequest auth){
