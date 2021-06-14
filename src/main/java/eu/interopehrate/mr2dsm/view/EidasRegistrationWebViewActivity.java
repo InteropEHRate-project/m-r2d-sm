@@ -1,4 +1,4 @@
-package eu.interopehrate.mr2dsm;
+package eu.interopehrate.mr2dsm.view;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,16 +10,16 @@ import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 
-import java.net.URLEncoder;
-
+import eu.interopehrate.mr2dsm.R;
 import eu.interopehrate.mr2dsm.model.AuthRequest;
+import eu.interopehrate.mr2dsm.util.SecurityUtil;
 
-public class EidasWebViewActivity extends AppCompatActivity {
-    public static final String JWT_TOKEN = "JWT_TOKEN";
-    public static final String LOGIN_URL = "LOGIN_URL";
-    private static final String LOG_TAG = "EidasWebViewActivity";
+import static eu.interopehrate.mr2dsm.util.SecurityUtil.storeKeystore;
+
+public class EidasRegistrationWebViewActivity extends AppCompatActivity implements EidasMixin {
+    public static final String URL = "URL";
 
     private WebView mWebView;
 
@@ -28,43 +28,34 @@ public class EidasWebViewActivity extends AppCompatActivity {
         setContentView(R.layout.webview);
 
         Intent intent = getIntent();
-        String loginUrl = intent.getStringExtra(LOGIN_URL);
+        String loginUrl = intent.getStringExtra(URL);
 
         mWebView = (WebView) findViewById(R.id.webView1);
         mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.setWebViewClient(new EidasWebViewClient());
-        mWebView.setWebChromeClient(new EidasWebCromeClient());
+        mWebView.setWebViewClient(new EidasRegistrationWebViewActivity.EidasWebViewClient());
+        mWebView.setWebChromeClient(new EidasRegistrationWebViewActivity.EidasWebCromeClient());
 
         AuthRequest auth = new AuthRequest();
-        loadLoginPage(loginUrl, auth);
+        loadPage(loginUrl, auth);
     }
 
-    private String generateRequestUrl(String url, AuthRequest auth){
-        String request = "";
-        try {
-            String json = new ObjectMapper().writeValueAsString(auth);
-            request = URLEncoder.encode(json, "UTF-8");
-        } catch (Exception e) {
-            Log.e(LOG_TAG, "Failed to generate request URL: " + e.getMessage());
-        }
-
-        String requestUrl = url + "?attr=" + request;
-        return requestUrl;
-    }
-
-    private void loadLoginPage(String url, AuthRequest auth){
+    private void loadPage(String url, AuthRequest auth){
         String requestUrl = generateRequestUrl(url, auth);
-        Log.d(LOG_TAG, "request URL: " + requestUrl);
+        Log.d("loadPage", "request URL: " + requestUrl);
         mWebView.loadUrl(requestUrl);
     }
 
-    private void finishActivity(String jwt){
+    private void finishActivity(String keystore){
         Intent intent = new Intent();
-        intent.putExtra(JWT_TOKEN, jwt);
-        setResult(RESULT_OK, intent);
+        try {
+            storeKeystore(this, keystore);
+            setResult(RESULT_OK, intent);
+        } catch (IOException e) {
+            setResult(RESULT_CANCELED, intent);
+            Log.e("storeKeystore", "Failed to store keystore: " + e.getMessage());
+        }
         finish();
     }
-
 
     private class EidasWebViewClient extends WebViewClient {
 
@@ -78,10 +69,12 @@ public class EidasWebViewActivity extends AppCompatActivity {
         @Override
         public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
             String msg = consoleMessage.message();
-            if (JwtUtil.isJWT(msg)){
+            //TODO: what about password???
+            if(SecurityUtil.isKeystore(msg, "menelaos")){
                 finishActivity(msg);
             }
             return true;
         }
     }
 }
+

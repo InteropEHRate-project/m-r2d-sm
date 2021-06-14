@@ -21,6 +21,7 @@ import eu.interopehrate.mr2dsm.model.ResponseDetails;
 import eu.interopehrate.mr2dsm.model.ResponseAttibute;
 import eu.interopehrate.mr2dsm.model.SubStatusCode;
 import eu.interopehrate.mr2dsm.model.UserDetails;
+import eu.interopehrate.mr2dsm.util.SecurityUtil;
 import io.jsonwebtoken.Claims;
 
 public class MR2DSM {
@@ -36,13 +37,13 @@ public class MR2DSM {
             Log.e(LOG_TAG, "Failed to load private.pub :" + e.getMessage());
         }
         Log.d("key", key);
-        Claims jwtClaims = JwtUtil.decode(jwt, key);
+        Claims jwtClaims = SecurityUtil.decode(jwt, key);
 
         ResponseDetails res = new ResponseDetails();
 
         res.setAssertion(jwtClaims.get("assertion").toString());
         String encryptedData = jwtClaims.get("attributes").toString();
-        String data = JwtUtil.decode(encryptedData, key).get("data3").toString();
+        String data = SecurityUtil.decode(encryptedData, key).get("data3").toString();
         data = data.replaceAll("\n","");
         data = data.replaceAll("\r","");
 
@@ -120,5 +121,8 @@ public class MR2DSM {
         }
         return builder.toString();
     }
+
+
+
 
 }
