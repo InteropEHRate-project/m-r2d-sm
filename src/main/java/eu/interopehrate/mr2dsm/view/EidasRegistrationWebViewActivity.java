@@ -69,8 +69,7 @@ public class EidasRegistrationWebViewActivity extends AppCompatActivity implemen
         @Override
         public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
             String msg = consoleMessage.message();
-            //TODO: what about password???
-            if(SecurityUtil.isKeystore(msg, "menelaos")){
+            if(SecurityUtil.isKeystore(msg)){
                 finishActivity(msg);
             }
             return true;

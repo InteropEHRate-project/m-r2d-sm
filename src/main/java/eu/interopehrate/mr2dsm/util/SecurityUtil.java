@@ -27,6 +27,7 @@ import io.jsonwebtoken.Jwts;
 
 public class SecurityUtil {
     private final static String KEYSTORE_NAME = "keystore.p12";
+    private final static String KEYSTORE_PASSWORD = "interop";
 
     public static boolean isJWT(String jwt) {
         String[] jwtSplitted = jwt.split("\\.");
@@ -69,12 +70,12 @@ public class SecurityUtil {
                 .parseClaimsJws(jwt).getBody();
     }
 
-    public static boolean isKeystore(String keystoreStr, String password) {
+    public static boolean isKeystore(String keystoreStr) {
         try {
             KeyStore keystore = KeyStore.getInstance("PKCS12");
             String base64string = new String(Base64.decode(keystoreStr, Base64.DEFAULT));
             byte[] decoded = Base64.decode(base64string, Base64.DEFAULT);
-            keystore.load(new ByteArrayInputStream(decoded), password.toCharArray());
+            keystore.load(new ByteArrayInputStream(decoded), KEYSTORE_PASSWORD.toCharArray());
         } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException e) {
             e.printStackTrace();
             return false;
