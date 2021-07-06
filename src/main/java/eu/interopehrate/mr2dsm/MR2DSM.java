@@ -21,6 +21,7 @@ import eu.interopehrate.mr2dsm.model.ResponseDetails;
 import eu.interopehrate.mr2dsm.model.ResponseAttibute;
 import eu.interopehrate.mr2dsm.model.SubStatusCode;
 import eu.interopehrate.mr2dsm.model.UserDetails;
+import eu.interopehrate.mr2dsm.util.FileUtil;
 import eu.interopehrate.mr2dsm.util.SecurityUtil;
 import io.jsonwebtoken.Claims;
 
@@ -32,7 +33,7 @@ public class MR2DSM {
 
         String key = "";
         try {
-            key = LoadData(context, "private.pub");
+            key = FileUtil.LoadData(context, "private.pub");
         } catch (IOException e) {
             Log.e(LOG_TAG, "Failed to load private.pub :" + e.getMessage());
         }
@@ -95,34 +96,5 @@ public class MR2DSM {
 
         return res;
     }
-
-    private static String LoadData(Context context, String fileName) throws IOException {
-        BufferedReader reader = null;
-        StringBuilder builder = new StringBuilder();
-        try {
-            InputStream stream = context.getAssets().open(fileName);
-            reader = new BufferedReader(
-                    new InputStreamReader(stream, "UTF-8"));
-
-            int c;
-            while ((c = reader.read()) != -1) {
-                builder.append((char)c);
-            }
-        } catch (IOException e) {
-            throw e;
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "Failed to close stream " + e.getMessage());
-                }
-            }
-        }
-        return builder.toString();
-    }
-
-
-
 
 }

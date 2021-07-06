@@ -76,8 +76,12 @@ public class SecurityUtil {
             String base64string = new String(Base64.decode(keystoreStr, Base64.DEFAULT));
             byte[] decoded = Base64.decode(base64string, Base64.DEFAULT);
             keystore.load(new ByteArrayInputStream(decoded), KEYSTORE_PASSWORD.toCharArray());
-        } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException e) {
-            e.printStackTrace();
+        } catch (KeyStoreException |
+                CertificateException |
+                IOException |
+                NoSuchAlgorithmException |
+                RuntimeException e) {
+            Log.d("isKeystore", e.getMessage());
             return false;
         }
         return true;
@@ -86,7 +90,7 @@ public class SecurityUtil {
     public static void storeKeystore(Context context, String keystoreStr) throws IOException {
         String keyStorePath = getKeystorePath(context);
         String base64string = new String(Base64.decode(keystoreStr, Base64.DEFAULT));
-        FileOutputStream stream = new FileOutputStream(keyStorePath + ".p12");
+        FileOutputStream stream = new FileOutputStream(keyStorePath);
         stream.write(Base64.decode(base64string, Base64.DEFAULT));
     }
 
