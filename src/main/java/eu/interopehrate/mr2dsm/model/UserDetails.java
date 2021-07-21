@@ -5,30 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 
 public class UserDetails {
-    private String legalName;
-    private String legalPersonIdentifier;
     private HomeAddress currentAddress;
     private String familyName;
     private String firstName;
     private String dateOfBirth;
     private String gender;
     private String personIdentifier;
-
-    public String getLegalName() {
-        return legalName;
-    }
-
-    public void setLegalName(String legalName) {
-        this.legalName = legalName;
-    }
-
-    public String getLegalPersonIdentifier() {
-        return legalPersonIdentifier;
-    }
-
-    public void setLegalPersonIdentifier(String legalPersonIdentifier) {
-        this.legalPersonIdentifier = legalPersonIdentifier;
-    }
+    private String birthName;
+    private String placeOfBirth;
 
     public HomeAddress getCurrentAddress() {
         return currentAddress;
@@ -78,20 +62,36 @@ public class UserDetails {
         this.personIdentifier = personIdentifier;
     }
 
+    public String getBirthName() {
+        return birthName;
+    }
+
+    public void setBirthName(String birthName) {
+        this.birthName = birthName;
+    }
+
+    public String getPlaceOfBirth() {
+        return placeOfBirth;
+    }
+
+    public void setPlaceOfBirth(String placeOfBirth) {
+        this.placeOfBirth = placeOfBirth;
+    }
+
     public static UserDetails create(List<ResponseAttibute> attributes) {
 
         UserDetails user = new UserDetails();
 
         for(ResponseAttibute attr : attributes) {
             switch (attr.getName()) {
-                case Attribute.LEGAL_NAME: {
+                case Attribute.BIRTH_NAME: {
                     String value = attr.getValues().get(0).getValue();
-                    user.setLegalName(value);
+                    user.setBirthName(value);
                     break;
                 }
-                case Attribute.LEGAL_PERSON_IDENTIFIER: {
+                case Attribute.PLACE_OF_BIRTH: {
                     String value = attr.getValues().get(0).getValue();
-                    user.setLegalPersonIdentifier(value);
+                    user.setPlaceOfBirth(value);
                     break;
                 }
                 case Attribute.CURRENT_ADDRESS: {

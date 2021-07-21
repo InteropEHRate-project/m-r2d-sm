@@ -9,6 +9,8 @@ public class Attribute {
     public static final String DATE_OF_BIRTH = "DateOfBirth";
     public static final String GENDER = "Gender";
     public static final String PERSON_IDENTIFIER = "PersonIdentifier";
+    public static final String BIRTH_NAME = "BirthName";
+    public static final String PLACE_OF_BIRTH = "PlaceOfBirth";
 
     private String type;
     private String name;

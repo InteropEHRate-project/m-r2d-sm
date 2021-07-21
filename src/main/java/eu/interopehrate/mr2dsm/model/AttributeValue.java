@@ -1,5 +1,8 @@
 package eu.interopehrate.mr2dsm.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AttributeValue {
     private String value;
 

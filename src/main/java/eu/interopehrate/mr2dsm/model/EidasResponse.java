@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.UUID;
 
+
 public class EidasResponse {
     private String version;
     private UUID id;
