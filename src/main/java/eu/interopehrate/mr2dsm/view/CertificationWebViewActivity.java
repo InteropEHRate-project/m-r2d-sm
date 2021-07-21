@@ -21,7 +21,7 @@ import io.jsonwebtoken.Claims;
 
 import static eu.interopehrate.mr2dsm.util.SecurityUtil.storeKeystore;
 
-public class EidasRegistrationWebViewActivity extends AppCompatActivity implements EidasMixin {
+public class CertificationWebViewActivity extends AppCompatActivity implements EidasMixin {
     public static final String URL = "URL";
 
     private WebView mWebView;
@@ -35,8 +35,8 @@ public class EidasRegistrationWebViewActivity extends AppCompatActivity implemen
 
         mWebView = (WebView) findViewById(R.id.webView1);
         mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.setWebViewClient(new EidasRegistrationWebViewActivity.EidasWebViewClient());
-        mWebView.setWebChromeClient(new EidasRegistrationWebViewActivity.EidasWebCromeClient());
+        mWebView.setWebViewClient(new CertificationWebViewActivity.EidasWebViewClient());
+        mWebView.setWebChromeClient(new CertificationWebViewActivity.EidasWebCromeClient());
 
         AuthRequest auth = new AuthRequest();
         loadPage(loginUrl, auth);

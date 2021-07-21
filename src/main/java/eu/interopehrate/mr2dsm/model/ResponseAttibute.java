@@ -1,7 +1,5 @@
 package eu.interopehrate.mr2dsm.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.util.List;
 
 public class ResponseAttibute {
