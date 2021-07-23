@@ -1,14 +1,23 @@
-package eu.interopehrate.mr2dsm;
+package eu.interopehrate.mr2dsm.util;
 
+import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 
@@ -16,8 +25,11 @@ import java.security.spec.X509EncodedKeySpec;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
-class JwtUtil {
-    protected static boolean isJWT(String jwt) {
+public class SecurityUtil {
+    private final static String KEYSTORE_NAME = "keystore.p12";
+    private final static String KEYSTORE_PASSWORD = "interop";
+
+    public static boolean isJWT(String jwt) {
         String[] jwtSplitted = jwt.split("\\.");
         if (jwtSplitted.length != 3) // The JWT is composed of three parts
             return false;
@@ -34,7 +46,7 @@ class JwtUtil {
         return true;
     }
 
-    protected static Claims decode(String jwt, String key) throws InvalidKeySpecException {
+    public static Claims decode(String jwt, String key) throws InvalidKeySpecException {
         PublicKey publicKey = null;
         try {
             //Remove extra Strings
@@ -57,4 +69,34 @@ class JwtUtil {
                 .setSigningKey(publicKey)
                 .parseClaimsJws(jwt).getBody();
     }
+
+    public static boolean isKeystore(String keystoreStr) {
+        try {
+            KeyStore keystore = KeyStore.getInstance("PKCS12");
+            String base64string = new String(Base64.decode(keystoreStr, Base64.DEFAULT));
+            byte[] decoded = Base64.decode(base64string, Base64.DEFAULT);
+            keystore.load(new ByteArrayInputStream(decoded), KEYSTORE_PASSWORD.toCharArray());
+        } catch (KeyStoreException |
+                CertificateException |
+                IOException |
+                NoSuchAlgorithmException |
+                RuntimeException e) {
+            Log.d("isKeystore", e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    public static void storeKeystore(Context context, String keystoreStr) throws IOException {
+        String keyStorePath = getKeystorePath(context);
+        String base64string = new String(Base64.decode(keystoreStr, Base64.DEFAULT));
+        FileOutputStream stream = new FileOutputStream(keyStorePath);
+        stream.write(Base64.decode(base64string, Base64.DEFAULT));
+    }
+
+    private static String getKeystorePath(Context context) {
+        return context.getFilesDir().getAbsolutePath() + "/"
+                + KEYSTORE_NAME;
+    }
+
 }

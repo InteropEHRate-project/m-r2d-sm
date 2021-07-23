@@ -86,14 +86,15 @@ public class AuthRequest implements Serializable {
 
     private void initialize() {
         List<Attribute> attribute_list = new ArrayList<Attribute>();
-        attribute_list.add(new Attribute("requested_attribute", Attribute.LEGAL_NAME, true,null));
-        attribute_list.add(new Attribute("requested_attribute", Attribute.LEGAL_PERSON_IDENTIFIER, true,null));
         attribute_list.add(new Attribute("requested_attribute", Attribute.CURRENT_ADDRESS, true,null));
         attribute_list.add(new Attribute("requested_attribute", Attribute.FAMILY_NAME, true,null));
         attribute_list.add(new Attribute("requested_attribute", Attribute.FIRST_NAME, true,null));
         attribute_list.add(new Attribute("requested_attribute", Attribute.DATE_OF_BIRTH, true,null));
         attribute_list.add(new Attribute("requested_attribute", Attribute.GENDER, false,null));
         attribute_list.add(new Attribute("requested_attribute", Attribute.PERSON_IDENTIFIER, true,null));
+        attribute_list.add(new Attribute("requested_attribute", Attribute.PLACE_OF_BIRTH, false,null));
+        attribute_list.add(new Attribute("requested_attribute", Attribute.BIRTH_NAME, false,null));
+
         SmsspTokenRequest smsspToken = new SmsspTokenRequest(Instant.now().toString(), UUID.randomUUID(),"http://localhost:8080/SP","1");
         smsspToken.setAttribute_list(attribute_list);
         smsspToken.setCitizen_country(null);

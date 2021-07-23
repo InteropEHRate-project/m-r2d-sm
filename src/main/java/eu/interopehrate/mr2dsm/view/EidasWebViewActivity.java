@@ -1,4 +1,4 @@
-package eu.interopehrate.mr2dsm;
+package eu.interopehrate.mr2dsm.view;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,13 +10,11 @@ import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.net.URLEncoder;
-
+import eu.interopehrate.mr2dsm.util.SecurityUtil;
+import eu.interopehrate.mr2dsm.R;
 import eu.interopehrate.mr2dsm.model.AuthRequest;
 
-public class EidasWebViewActivity extends AppCompatActivity {
+public class EidasWebViewActivity extends AppCompatActivity implements EidasMixin{
     public static final String JWT_TOKEN = "JWT_TOKEN";
     public static final String LOGIN_URL = "LOGIN_URL";
     private static final String LOG_TAG = "EidasWebViewActivity";
@@ -37,19 +35,6 @@ public class EidasWebViewActivity extends AppCompatActivity {
 
         AuthRequest auth = new AuthRequest();
         loadLoginPage(loginUrl, auth);
-    }
-
-    private String generateRequestUrl(String url, AuthRequest auth){
-        String request = "";
-        try {
-            String json = new ObjectMapper().writeValueAsString(auth);
-            request = URLEncoder.encode(json, "UTF-8");
-        } catch (Exception e) {
-            Log.e(LOG_TAG, "Failed to generate request URL: " + e.getMessage());
-        }
-
-        String requestUrl = url + "?attr=" + request;
-        return requestUrl;
     }
 
     private void loadLoginPage(String url, AuthRequest auth){
@@ -78,7 +63,7 @@ public class EidasWebViewActivity extends AppCompatActivity {
         @Override
         public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
             String msg = consoleMessage.message();
-            if (JwtUtil.isJWT(msg)){
+            if (SecurityUtil.isJWT(msg)){
                 finishActivity(msg);
             }
             return true;
