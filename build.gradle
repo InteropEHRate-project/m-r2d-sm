@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: "maven-publish"
 group = "eu.interopehrate"
-version = "0.1.2"
+version = "0.2.0"
 
 android {
     compileSdkVersion 30
