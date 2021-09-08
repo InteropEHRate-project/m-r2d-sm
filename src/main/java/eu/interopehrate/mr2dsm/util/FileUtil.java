@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,4 +35,11 @@ public class FileUtil {
         }
         return builder.toString();
     }
+
+    public static void SaveData(Context context, String fileName, String data) throws IOException {
+        try (FileOutputStream stream = new FileOutputStream(fileName)) {
+            stream.write(data.getBytes());
+        }
+    }
+
 }

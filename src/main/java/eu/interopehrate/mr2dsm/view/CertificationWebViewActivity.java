@@ -3,6 +3,7 @@ package eu.interopehrate.mr2dsm.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.webkit.ConsoleMessage;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -51,8 +52,9 @@ public class CertificationWebViewActivity extends AppCompatActivity implements E
     private void finishActivity(String jwt){
         Intent intent = new Intent();
         try {
-            String keystore = decode(jwt);
-            storeKeystore(this, keystore);
+            Pair<String, String> pair = decode(jwt);
+            storeKeystore(this, pair.first);
+            FileUtil.SaveData(this, this.getFilesDir().getAbsolutePath() + "/alias" ,pair.second);
             setResult(RESULT_OK, intent);
         } catch (IOException | InvalidKeySpecException e) {
             setResult(RESULT_CANCELED, intent);
@@ -61,7 +63,7 @@ public class CertificationWebViewActivity extends AppCompatActivity implements E
         finish();
     }
 
-    private String decode(String jwt) throws InvalidKeySpecException {
+    private Pair<String, String> decode(String jwt) throws InvalidKeySpecException {
         String key = "";
         try {
             key = FileUtil.LoadData(this, "private_ca.pub");
@@ -72,8 +74,10 @@ public class CertificationWebViewActivity extends AppCompatActivity implements E
 
         Claims jwtClaims = SecurityUtil.decode(jwt, key);
         String keystore = jwtClaims.get("UserKeystore").toString();
+        String keystoreAlias =  jwtClaims.get("ca_username").toString();
         Log.d("keystore", keystore);
-        return keystore;
+        Log.d("ca_username", keystoreAlias);
+        return Pair.create(keystore, keystoreAlias);
     }
 
     private class EidasWebViewClient extends WebViewClient {
