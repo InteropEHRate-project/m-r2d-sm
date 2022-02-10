@@ -1,8 +1,9 @@
 package eu.interopehrate.mr2dsm.model;
 
 import java.io.Serializable;
-import java.time.Instant;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -95,7 +96,10 @@ public class AuthRequest implements Serializable {
         attribute_list.add(new Attribute("requested_attribute", Attribute.PLACE_OF_BIRTH, false,null));
         attribute_list.add(new Attribute("requested_attribute", Attribute.BIRTH_NAME, false,null));
 
-        SmsspTokenRequest smsspToken = new SmsspTokenRequest(Instant.now().toString(), UUID.randomUUID(),"http://localhost:8080/SP","1");
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+        SmsspTokenRequest smsspToken = new SmsspTokenRequest(formatter.format(date), UUID.randomUUID(),"http://localhost:8080/SP","1");
         smsspToken.setAttribute_list(attribute_list);
         smsspToken.setCitizen_country(null);
         smsspToken.setProvider_name("DEMO-SP-CA");
