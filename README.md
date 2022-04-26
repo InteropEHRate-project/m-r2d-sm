@@ -1,1 +1,1 @@
-# m-r2d-sm
+# InteropEHRate Mobile Research Data Sharing (RDS) protocol's Security Management Library
